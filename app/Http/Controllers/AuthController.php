@@ -22,7 +22,6 @@ class AuthController extends Controller
 
     public function callback()
     {
-        dd(request()->session()->all());
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
 
         dd($twitterData);
