@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,8 @@ class AuthController extends Controller
 
     public function me()
     {
+        Bugsnag::notifyError('Custom Error', 'Me: Something went wrong with user signup');
+
         return response()->json([
             'status' => 'ok',
             'user' => new UserResource(auth()->user())
@@ -23,6 +26,10 @@ class AuthController extends Controller
 
     public function redirect()
     {
+
+        Bugsnag::notifyError('Custom Error', 'Redirect: Something went wrong with user signup');
+
+
         return response()->json([
             'status' => 'ok',
             'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
@@ -31,6 +38,8 @@ class AuthController extends Controller
 
     public function callback()
     {
+        Bugsnag::notifyError('Custom Error', 'Callback: Something went wrong with user signup');
+
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
 
         $user = User::updateOrCreate(

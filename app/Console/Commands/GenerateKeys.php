@@ -30,11 +30,6 @@ class GenerateKeys extends Command
     public function handle()
     {
 
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'rakitamiljan@yahoo.com'
-        ]);
-
         $user = User::first();
 
         Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(2));
