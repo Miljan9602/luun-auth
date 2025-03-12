@@ -34,15 +34,15 @@ class AuthController extends Controller
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
 
         $user = User::updateOrCreate(
-            ['twitter_id' => $twitterData['id']],
+            ['twitter_id' => Arr::get($twitterData, 'id')],
             [
-                'name' => $twitterData['name'],
-                'description' => $twitterData['description'],
-                'twitter_username' => $twitterData['username'],
+                'name' => Arr::get($twitterData, 'name'),
+                'description' => Arr::get($twitterData, 'description'),
+                'twitter_username' => Arr::get($twitterData, 'username'),
                 'twitter_created_at' => Carbon::parse($twitterData['created_at']),
-                'location' => $twitterData['location'],
-                'profile_image_url' => $twitterData['profile_image_url'],
-                'twitter_verified' => $twitterData['verified'],
+                'location' => Arr::get($twitterData, 'location'),
+                'profile_image_url' => Arr::get($twitterData, 'profile_image_url'),
+                'twitter_verified' => Arr::get($twitterData, 'verified'),
                 'followers_count' => Arr::get($twitterData, 'public_metrics.followers_count'),
                 'following_count' => Arr::get($twitterData, 'public_metrics.following_count'),
                 'tweet_count' => Arr::get($twitterData, 'public_metrics.tweet_count'),

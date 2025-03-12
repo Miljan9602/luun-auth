@@ -23,19 +23,18 @@ class CustomTwitterProvider extends TwitterProvider
     protected function mapUserToObject(array $user)
     {
         return (new User)->setRaw($user)->map([
-            'id' => $user['id'] ?? null,
-            'nickname' => $user['username'] ?? null,
-            'name' => $user['name'] ?? null,
-            'avatar' => $user['profile_image_url'] ?? null,
-            'created_at' => $user['created_at'] ?? null,
-            'location' => $user['location'] ?? null,
-            'verified' => $user['verified'] ?? null,
-            'description' => $user['description'] ?? null,
-            'public_metrics' => $user['public_metrics'] ?? null,
-            'verified_followers_count' => $user['verified_followers_count'] ?? null,
-            'pinned_tweet_id' => $user['pinned_tweet_id'] ?? null,
-            'protected' => $user['protected'] ?? null,
-            'username' => $user['username'] ?? null,
+            'id' => Arr::get($user, 'id'),
+            'name' => Arr::get($user, 'name'),
+            'avatar' => Arr::get($user, 'profile_image_url'),
+            'created_at' => Arr::get($user, 'created_at'),
+            'location' => Arr::get($user, 'location'),
+            'verified' => Arr::get($user, 'verified'),
+            'description' => Arr::get($user, 'description'),
+            'public_metrics' => Arr::get($user, 'public_metrics'),
+            'verified_followers_count' => Arr::get($user, 'verified_followers_count'),
+            'pinned_tweet_id' => Arr::get($user, 'pinned_tweet_id'),
+            'protected' => Arr::get($user, 'protected'),
+            'username' => Arr::get($user, 'username'),
         ]);
     }
 }
