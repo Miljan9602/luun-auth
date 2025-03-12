@@ -41,12 +41,6 @@ class AuthController extends Controller
     {
         Bugsnag::notifyError('Custom Error', 'Callback: Something went wrong with user signup');
 
-        dd([
-            'session' => request()->session()->all(),
-            'headers' => request()->headers->all(),
-            'request' => request()
-        ]);
-
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
 
         $user = User::updateOrCreate(
