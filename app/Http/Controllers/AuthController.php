@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -11,6 +12,14 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+
+    public function me()
+    {
+        return response()->json([
+            'status' => 'ok',
+            'user' => new UserResource(auth()->user())
+        ], 200, [], JSON_UNESCAPED_SLASHES);
+    }
 
     public function redirect()
     {
@@ -23,13 +32,6 @@ class AuthController extends Controller
     public function callback()
     {
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
-
-        return response()->json([
-            'status' => 'ok',
-            'user' => $twitterData
-        ]);
-
-        dd($twitterData);
 
         $user = User::updateOrCreate(
             ['twitter_id' => $twitterData['id']],

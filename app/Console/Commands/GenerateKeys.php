@@ -30,10 +30,10 @@ class GenerateKeys extends Command
     public function handle()
     {
 
-//        $user = User::create([
-//            'name' => 'John Doe',
-//            'email' => 'rakitamiljan@yahoo.com'
-//        ]);
+        $user = User::create([
+            'name' => 'John Doe',
+            'email' => 'rakitamiljan@yahoo.com'
+        ]);
 
         $user = User::first();
 
@@ -41,6 +41,6 @@ class GenerateKeys extends Command
 
         Auth::setUser($user);
 
-        dd(Auth::user()->createToken('dswap')->accessToken);
+        $token = Auth::user()->createToken('dswap')->accessToken;
     }
 }

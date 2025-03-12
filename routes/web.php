@@ -19,5 +19,9 @@ Route::group(['prefix' => 'api/v1'], function ($router) {
                 ->name('auth.twitter.callback');
         });
 
+        Route::get('me', [\App\Http\Controllers\AuthController::class, 'me'])
+            ->middleware('auth:api')
+            ->name('auth.me');
+
     });
 });
