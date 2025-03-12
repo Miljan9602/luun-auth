@@ -19,9 +19,15 @@ Route::group(['prefix' => 'api/v1'], function ($router) {
                 ->name('auth.twitter.callback');
         });
 
-        Route::get('me', [\App\Http\Controllers\AuthController::class, 'me'])
-            ->middleware('auth:api')
-            ->name('auth.me');
+        Route::group(['prefix' => 'user'], function ($router) {
+            Route::get('me', [\App\Http\Controllers\UserController::class, 'me'])
+                ->middleware('auth:api')
+                ->name('auth.user.me');
+
+            Route::patch('wallet', [\App\Http\Controllers\UserController::class, 'updateWallet'])
+                ->middleware('auth:api')
+                ->name('auth.user.wallet');
+        });
 
     });
 });

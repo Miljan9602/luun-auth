@@ -14,14 +14,6 @@ use Laravel\Socialite\Facades\Socialite;
 class AuthController extends Controller
 {
 
-    public function me()
-    {
-        return response()->json([
-            'status' => 'ok',
-            'user' => new UserResource(auth()->user())
-        ], 200, [], JSON_UNESCAPED_SLASHES);
-    }
-
     public function redirect()
     {
         return response()->json([
@@ -35,7 +27,7 @@ class AuthController extends Controller
         Bugsnag::notifyError('Custom Error', 'Callback: Something went wrong with user signup');
 
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
-        
+
         $user = User::updateOrCreate(
             ['twitter_id' => Arr::get($twitterData, 'id')],
             [

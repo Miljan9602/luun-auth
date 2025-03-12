@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('description')->nullable();
-            $table->string('evm_address')->nullable()->unique();
+            $table->string('evm_wallet')->nullable()->unique();
 
             $table->string('twitter_id')->unique();
             $table->string('twitter_username')->index();
