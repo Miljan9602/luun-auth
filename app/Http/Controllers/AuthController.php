@@ -29,8 +29,7 @@ class AuthController extends Controller
 
         Bugsnag::notifyError('Custom Error', 'Redirect: Something went wrong with user signup');
 
-        return Socialite::driver('twitter')->redirect();
-
+//        return Socialite::driver('twitter')->redirect();
 
         return response()->json([
             'status' => 'ok',
