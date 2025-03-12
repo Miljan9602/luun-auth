@@ -24,6 +24,11 @@ class AuthController extends Controller
     {
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
 
+        return response()->json([
+            'status' => 'ok',
+            'user' => $twitterData
+        ]);
+
         dd($twitterData);
 
         $user = User::updateOrCreate(
