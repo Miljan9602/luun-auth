@@ -18,8 +18,11 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('description')->nullable();
-            $table->string('twitter_id')->unique()->index();
-            $table->string('twitter_username')->unique()->index();
+            $table->string('evm_address')->nullable()->unique();
+
+            $table->string('twitter_id')->unique();
+            $table->string('twitter_username')->index();
+
             $table->date('twitter_created_at')->nullable();
             $table->string('location')->nullable();
             $table->string('profile_image_url')->nullable();
