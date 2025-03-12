@@ -16,10 +16,12 @@ class AuthController extends Controller
 
     public function redirect()
     {
-        return response()->json([
-            'status' => 'ok',
-            'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
-        ], 200, [], JSON_UNESCAPED_SLASHES);
+        return Socialite::driver('twitter')->redirect();
+
+//        return response()->json([
+//            'status' => 'ok',
+//            'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
+//        ], 200, [], JSON_UNESCAPED_SLASHES);
     }
 
     public function callback()
@@ -51,9 +53,13 @@ class AuthController extends Controller
 
         Auth::setUser($user);
 
-        return response()->json([
-            'status' => 'ok',
-            'access_token' => Auth::user()->createToken('dswap')->accessToken,
-        ]);
+        $token = Auth::user()->createToken('dswap')->accessToken;
+
+        return redirect('https://dragonswap.app/auth#'.$token);
+
+//        return response()->json([
+//            'status' => 'ok',
+//            'access_token' => Auth::user()->createToken('dswap')->accessToken,
+//        ]);
     }
 }
