@@ -16,8 +16,6 @@ class AuthController extends Controller
 
     public function me()
     {
-        Bugsnag::notifyError('Custom Error', 'Me: Something went wrong with user signup');
-
         return response()->json([
             'status' => 'ok',
             'user' => new UserResource(auth()->user())
@@ -26,11 +24,6 @@ class AuthController extends Controller
 
     public function redirect()
     {
-
-        Bugsnag::notifyError('Custom Error', 'Redirect: Something went wrong with user signup');
-
-//        return Socialite::driver('twitter')->redirect();
-
         return response()->json([
             'status' => 'ok',
             'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
@@ -42,9 +35,7 @@ class AuthController extends Controller
         Bugsnag::notifyError('Custom Error', 'Callback: Something went wrong with user signup');
 
         $twitterData = Socialite::driver('twitter')->user()->getRaw();
-
-        dd($twitterData);
-
+        
         $user = User::updateOrCreate(
             ['twitter_id' => Arr::get($twitterData, 'id')],
             [
