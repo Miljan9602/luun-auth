@@ -16,12 +16,10 @@ class AuthController extends Controller
 
     public function redirect()
     {
-        return Socialite::driver('twitter')->redirect();
-
-//        return response()->json([
-//            'status' => 'ok',
-//            'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
-//        ], 200, [], JSON_UNESCAPED_SLASHES);
+        return response()->json([
+            'status' => 'ok',
+            'url' => Socialite::driver('twitter')->redirect()->getTargetUrl()
+        ], 200, [], JSON_UNESCAPED_SLASHES);
     }
 
     public function callback()
