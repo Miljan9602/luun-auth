@@ -13,7 +13,7 @@
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.10.1",
         "mongodb/laravel-mongodb": "^5.2",
-        "ext-mongodb" : "*"
+        "ext-mongodb" : "^1.21.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
