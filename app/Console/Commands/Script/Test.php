@@ -26,7 +26,6 @@ class Test extends Command
      */
     public function handle()
     {
-        dd(config('database.connections.mongodb'));
         $result = DB::connection('mongodb')->table('products')->insert([
             'name' => 'Laptop',
             'price' => 1500,
