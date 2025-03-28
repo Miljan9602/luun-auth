@@ -12,7 +12,8 @@
         "laravel/passport": "^12.0",
         "laravel/socialite": "^5.18",
         "laravel/tinker": "^2.10.1",
-        "mongodb/laravel-mongodb": "^5.2"
+        "mongodb/laravel-mongodb": "^5.2",
+        "ext-mongodb" : "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
