@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', '.dragonswap.app'),
+    'domain' => env('SESSION_DOMAIN', '.luun.network'),
 
     /*
     |--------------------------------------------------------------------------
