@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('follows', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('follower_twitter_id')->index();
-            $table->unsignedBigInteger('followed_twitter_id')->index();
+            $table->unsignedBigInteger('follower_id')->index();
+            $table->unsignedBigInteger('followed_id')->index();
             $table->timestamp('created_at')->nullable();
 
-            $table->unique(['follower_twitter_id', 'followed_twitter_id'], 'follower_followed_unique');
+            $table->unique(['follower_id', 'followed_id'], 'follower_followed_unique');
         });
     }
 

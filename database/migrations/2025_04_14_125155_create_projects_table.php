@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('multi_chain_apps', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
 
             $table->string('twitter_name');
             $table->string('twitter_username');
             $table->string('twitter_id')->unique();
+            $table->string('type')->index();
             $table->string('website');
             $table->json('socials');
 
@@ -25,8 +26,10 @@ return new class extends Migration
             $table->text('description');
 
             $table->unsignedInteger('campaigns_count')->default(0);
+            $table->unsignedInteger('projects_count')->default(0);
             $table->double('active_rewards_usd')->default(0);
             $table->double('rewards_distributed_usd')->default(0);
+            $table->string('ecosystem_id')->nullable();
 
             $table->timestamps();
         });
@@ -37,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('multi_chain_apps');
+        Schema::dropIfExists('projects');
     }
 };

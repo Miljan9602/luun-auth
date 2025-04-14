@@ -25,6 +25,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function getId() : string
+    {
+        return $this->twitter_id;
+    }
+
     /**
      * Get the attributes that should be cast.
      *

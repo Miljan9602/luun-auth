@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MultiChainApp extends Model
+class Project extends Model
 {
     protected $guarded = [];
 }

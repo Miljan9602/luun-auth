@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
-use App\Repository\EloquentFollowRepository;
-use App\Repository\FollowRepositoryInterface;
+use App\Repository\Follow\EloquentFollowRepository;
+use App\Repository\Follow\FollowRepositoryInterface;
+use App\Repository\Project\EloquentProjectRepository;
+use App\Repository\Project\ProjectRepositoryInterface;
+use App\Repository\User\EloquentUserRepository;
+use App\Repository\User\UserRepositoryInterface;
 use App\Service\Socialite\CustomTwitterProvider;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
@@ -31,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(FollowRepositoryInterface::class, EloquentFollowRepository::class);
+
+        $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
+
+        $this->app->bind(ProjectRepositoryInterface::class, EloquentProjectRepository::class);
     }
 
     /**
