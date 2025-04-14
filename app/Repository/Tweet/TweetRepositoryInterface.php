@@ -18,4 +18,12 @@ interface TweetRepositoryInterface
      * @return mixed
      */
     public function createOrUpdateTweet(string $collection, string $tweetId, array $tweetData = []);
+
+    /**
+     * @param string $collection
+     * @param array $query
+     * @param int $limit
+     * @return mixed
+     */
+    public function getTweetsFromQuery(string $collection, array $query, int $limit = 25);
 }

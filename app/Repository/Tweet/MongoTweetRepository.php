@@ -18,4 +18,10 @@ class MongoTweetRepository implements TweetRepositoryInterface
         return DB::connection('mongodb')->table($collection)->updateOrInsert(['id_str' => $tweetId], $tweetData);
     }
 
+    public function getTweetsFromQuery(string $collection, array $query, int $limit = 100)
+    {
+        $result = DB::connection('mongodb')->table($collection)->where($query)->limit($limit)->get();
+
+        return $result ? $result->toArray() : [];
+    }
 }
