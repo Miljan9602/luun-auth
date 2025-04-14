@@ -29,13 +29,14 @@ class GenerateKeys extends Command
      */
     public function handle()
     {
-
         $user = User::first();
 
         Passport::personalAccessTokensExpireIn(Carbon::now()->addDays(2));
 
         Auth::setUser($user);
 
-        $token = Auth::user()->createToken('dswap')->accessToken;
+        $token = Auth::user()->createToken('luun')->accessToken;
+
+        dd($token);
     }
 }

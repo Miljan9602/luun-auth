@@ -51,13 +51,8 @@ class AuthController extends Controller
 
         Auth::setUser($user);
 
-        $token = Auth::user()->createToken('dswap')->accessToken;
+        $token = Auth::user()->createToken('luun')->accessToken;
 
         return redirect('https://dragonswap.app/auth#'.$token);
-
-//        return response()->json([
-//            'status' => 'ok',
-//            'access_token' => Auth::user()->createToken('dswap')->accessToken,
-//        ]);
     }
 }
