@@ -40,6 +40,11 @@ return [
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
         'redirect' => env('TWITTER_REDIRECT_URI')
 //        'oauth' => 2
+    ],
+
+    'rapid_api' => [
+        'host' => env('RAPID_API_HOST', 'https://twitter241.p.rapidapi.com'),
+        'api_key' => env('RAPID_URL')
     ]
 
 ];

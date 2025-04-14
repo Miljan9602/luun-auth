@@ -6,9 +6,14 @@ use App\Repository\Follow\EloquentFollowRepository;
 use App\Repository\Follow\FollowRepositoryInterface;
 use App\Repository\Project\EloquentProjectRepository;
 use App\Repository\Project\ProjectRepositoryInterface;
+use App\Repository\Tweet\MongoTweetRepository;
+use App\Repository\Tweet\TweetRepositoryInterface;
 use App\Repository\User\EloquentUserRepository;
 use App\Repository\User\UserRepositoryInterface;
+use App\Repository\XUser\MongoXUserRepository;
+use App\Repository\XUser\XUserRepositoryInterface;
 use App\Service\Socialite\CustomTwitterProvider;
+use App\Service\Twitter\TwitterService;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 
@@ -34,11 +39,22 @@ class AppServiceProvider extends ServiceProvider
             return $service;
         });
 
-        $this->app->bind(FollowRepositoryInterface::class, EloquentFollowRepository::class);
+        $this->app->singleton(FollowRepositoryInterface::class, EloquentFollowRepository::class);
 
-        $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
+        $this->app->singleton(UserRepositoryInterface::class, EloquentUserRepository::class);
 
-        $this->app->bind(ProjectRepositoryInterface::class, EloquentProjectRepository::class);
+        $this->app->singleton(ProjectRepositoryInterface::class, EloquentProjectRepository::class);
+
+        $this->app->singleton(TweetRepositoryInterface::class, MongoTweetRepository::class);
+
+        $this->app->bind(XUserRepositoryInterface::class, MongoXUserRepository::class);
+
+        $this->app->bind(TwitterService::class, function () {
+            $apiKey = config('services.rapid_api.api_key');
+            $host = config('services.rapid_api.host');
+
+            return new TwitterService($apiKey, $host);
+        });
     }
 
     /**
