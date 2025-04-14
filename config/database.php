@@ -31,6 +31,12 @@ return [
 
     'connections' => [
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => env('ORMONGO_URL', 'mongodb://localhost:27017'),
+            'database' => env('MONGODB_DATABASE', 'luun'),
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),

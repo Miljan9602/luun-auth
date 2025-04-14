@@ -34,6 +34,7 @@ return new class extends Migration
             $table->unsignedBigInteger('like_count')->default(0);
             $table->unsignedBigInteger('media_count')->default(0);
             $table->rememberToken();
+
             $table->timestamps();
         });
 
