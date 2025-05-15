@@ -48,7 +48,7 @@ class AuthController extends Controller
 
         $token = Auth::user()->createToken('luun')->accessToken;
 
-        return redirect('https://localhost:5173/xdrg/redirect#'. $token);
+        return redirect('https://localhost:5173/twitter/redirect#'. $token);
 
 //        return redirect('https://dragonswap.app/auth#' . $token);
     }
