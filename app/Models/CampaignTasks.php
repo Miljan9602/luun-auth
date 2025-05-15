@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Follow extends Model
+class CampaignTasks extends Model
 {
-    const UPDATED_AT = null;
     protected $guarded = [];
 }

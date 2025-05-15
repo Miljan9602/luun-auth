@@ -6,10 +6,17 @@ use Illuminate\Support\Collection;
 
 class ProjectCollection extends Collection
 {
-    public function filterByType(string $type) : ProjectCollection
+    public function filterByType(string $type): ProjectCollection
     {
         return $this->filter(function ($project) use ($type) {
             return $project->type === $type;
+        });
+    }
+
+    public function featured(): ProjectCollection
+    {
+        return $this->filter(function ($project) {
+            return $project->is_featured_enabled === true;
         });
     }
 }

@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->date('twitter_created_at')->nullable();
             $table->string('location')->nullable();
-            $table->string('profile_image_url')->nullable();
+            $table->string('profile_image_url', 1023)->nullable();
             $table->boolean('twitter_verified')->default(false);
             $table->unsignedBigInteger('followers_count')->default(0);
             $table->unsignedBigInteger('following_count')->default(0);

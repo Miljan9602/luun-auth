@@ -10,7 +10,7 @@ class MongoXUserRepository implements XUserRepositoryInterface
     {
         $result = DB::connection('mongodb')->table('users')->where(['user_id' => $userId])->first();
 
-        return $result ? (array) $result : null;
+        return $result ? (array)$result : null;
     }
 
     public function createOrUpdateUser(string $userId, array $userData = [])

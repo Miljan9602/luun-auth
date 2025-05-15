@@ -9,7 +9,7 @@ interface TweetRepositoryInterface
      * @param string $tweetId
      * @return array|null
      */
-    public function getTweetById(string $collection, string $tweetId) : ?array;
+    public function getTweetById(string $collection, string $tweetId): ?array;
 
     /**
      * @param string $collection

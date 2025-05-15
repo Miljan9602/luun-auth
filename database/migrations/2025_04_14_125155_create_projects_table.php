@@ -22,9 +22,11 @@ return new class extends Migration
             $table->json('socials');
 
             $table->string('ticker');
-            $table->string('logo_url');
+            $table->string('logo_url', 1023);
             $table->text('description');
 
+            $table->boolean('is_featured_enabled')->default(false);
+            $table->string('featured_image_url', 1023)->nullable();
             $table->unsignedInteger('campaigns_count')->default(0);
             $table->unsignedInteger('projects_count')->default(0);
             $table->double('active_rewards_usd')->default(0);

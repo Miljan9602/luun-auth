@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repository\Campaign\CampaignRepositoryInterface;
+use App\Repository\Campaign\EloquentCampaignRepository;
+use App\Repository\CampaignTask\CampaignTaskRepositoryInterface;
+use App\Repository\CampaignTask\EloquentCampaignTaskRepository;
 use App\Repository\Follow\EloquentFollowRepository;
 use App\Repository\Follow\FollowRepositoryInterface;
 use App\Repository\Project\EloquentProjectRepository;
@@ -48,6 +52,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TweetRepositoryInterface::class, MongoTweetRepository::class);
 
         $this->app->bind(XUserRepositoryInterface::class, MongoXUserRepository::class);
+
+        $this->app->bind(CampaignRepositoryInterface::class, EloquentCampaignRepository::class);
+
+        $this->app->bind(CampaignTaskRepositoryInterface::class, EloquentCampaignTaskRepository::class);
 
         $this->app->bind(TwitterService::class, function () {
             $apiKey = config('services.rapid_api.api_key');

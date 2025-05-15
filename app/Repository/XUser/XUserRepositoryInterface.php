@@ -8,7 +8,7 @@ interface XUserRepositoryInterface
      * @param string $userId
      * @return array|null
      */
-    public function getUserById(string $userId) : ?array;
+    public function getUserById(string $userId): ?array;
 
     /**
      * @param string $userId

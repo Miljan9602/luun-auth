@@ -10,17 +10,17 @@ interface ProjectRepositoryInterface
     /**
      * @return ProjectCollection
      */
-    public function all() : ProjectCollection;
+    public function all(): ProjectCollection;
 
     /**
      * @param array $data
      * @return Project
      */
-    public function create(array $data) : Project;
+    public function create(array $data): Project;
 
     /**
      * @param string $twitterId
      * @return Project|null
      */
-    public function projectById(string $twitterId) : ?Project;
+    public function projectById(string $twitterId): ?Project;
 }

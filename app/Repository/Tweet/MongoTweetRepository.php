@@ -10,7 +10,7 @@ class MongoTweetRepository implements TweetRepositoryInterface
     {
         $result = DB::connection('mongodb')->table($collection)->where(['id_str' => $tweetId])->first();
 
-        return $result ? (array) $result : null;
+        return $result ? (array)$result : null;
     }
 
     public function createOrUpdateTweet(string $collection, string $tweetId, array $tweetData = [])
@@ -18,7 +18,7 @@ class MongoTweetRepository implements TweetRepositoryInterface
         return DB::connection('mongodb')->table($collection)->updateOrInsert(['id_str' => $tweetId], $tweetData);
     }
 
-    public function getTweetsFromQuery(string $collection, array $query, int $limit = 100)
+    public function getTweetsFromQuery(string $collection, array $query, int $limit = 25)
     {
         $result = DB::connection('mongodb')->table($collection)->where($query)->limit($limit)->get();
 

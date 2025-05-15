@@ -2,6 +2,7 @@
 
 namespace App\Service\Twitter;
 
+use App\Exceptions\TwitterApi\ReplaceCursorException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
@@ -34,8 +35,26 @@ class TwitterService
         $this->host = $host;
     }
 
+    public function getTweetsByIds(array $ids)
+    {
+        $result = $this->sendRequest([
+            'tweetIds' => implode(',', $ids),
+        ], 'tweet-by-ids');
 
-    public function search(string $ticker, string $type, string $cursor = null, int $count = 100) : array
+        return $this->filterTweets(Arr::get($result, 'result.tweetResult'), 'result');
+    }
+
+
+    /**
+     * @param string $ticker
+     * @param string $type
+     * @param string|null $cursor
+     * @param string $cursorDirection
+     * @param int $count
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function search(string $ticker, string $type, string $cursor = null, string $cursorDirection, int $count = 100): array
     {
         $query = [
             'query' => $ticker,
@@ -47,26 +66,112 @@ class TwitterService
             $query['cursor'] = $cursor;
         }
 
-        $result = $this->sendRequest($query);
+        $result = $this->sendRequest($query, 'search-v2');
+
+        $items = Arr::get(Arr::first(Arr::get($result, 'result.timeline.instructions')), 'entries') ?? [];
 
         return [
             'cursor' => $this->parseCursor($result),
-            'tweets' => $this->filterTweets($result),
+            'tweets' => $this->filterTweets($items, 'content.itemContent.tweet_results.result'),
         ];
     }
 
-    private function filterTweets(array $response) : array
-    {
-        $items = Arr::get(Arr::first(Arr::get($response, 'result.timeline.instructions')), 'entries');
 
+    /**
+     * @param $query
+     * @param $url
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    private function sendRequest($query = [], $url)
+    {
+        $json = (new Client())->get($this->host .'/'. $url, [
+            'headers' => [
+                'x-rapidapi-key' => $this->apiKey
+            ],
+            'verify' => false,
+            'proxy' => 'http://127.0.0.1:8080',
+            'query' => $query,
+
+        ])->getBody()->getContents();
+
+        return json_decode($json, true);
+    }
+
+    private function parseCursor(array $response): array
+    {
+        return Arr::get($response, 'cursor');
+    }
+
+    public function formatTweet(array $tweet) : array
+    {
+        $createdAt = Carbon::createFromFormat('D M d H:i:s O Y', Arr::get($tweet, 'created_at'));
+        $tweet['created_at_timestamp'] = $createdAt->timestamp;
+        $tweet['created_at'] = $createdAt;
+
+        $entities = Arr::get($tweet, 'entities', []);
+        $userMentions = Arr::get($entities, 'user_mentions', []);
+        $symbolMentions = Arr::get($entities, 'symbols', []);
+
+        $usernameMentions = [];
+        $userIdsMentions = [];
+        $tickers = [];
+
+        foreach ($userMentions as $mention) {
+            $usernameMentions[] = $mention['screen_name'];
+            $userIdsMentions[] = $mention['id_str'];
+        }
+
+        foreach ($symbolMentions as $symbolMention) {
+            $tickers[] = strtoupper($symbolMention['text']);
+        }
+
+        $tweet['post_type'] = $this->getPostType($tweet);
+        $tweet['username_mentions'] = array_unique($usernameMentions);
+        $tweet['user_ids_mentions'] = array_unique($userIdsMentions);
+        $tweet['tickers'] = array_unique($tickers);
+
+        $tweet['ticker_mentions_count'] = count($tickers);
+        $tweet['user_mentions_count'] = count($userMentions);
+
+
+        return $tweet;
+    }
+
+    public function formatUser(array $user, array $tweet) : array
+    {
+        $user['user_id'] = Arr::get($tweet, 'user_id_str');
+
+        return $user;
+    }
+
+    private function unpackUserAndTweer(array $item) : array
+    {
+        $tweet = Arr::get($item, 'legacy', Arr::get($item, 'tweet.legacy'));
+        $user = Arr::get($item, 'core.user_results.result.legacy', Arr::get($item, 'tweet.core.user_results.result.legacy'));
+
+        return [
+            'tweet' => $tweet,
+            'user' => $user
+        ];
+    }
+
+    private function filterTweets(array $items, string $tweetRootPath): array
+    {
         $tweets = [];
 
         foreach ($items as $originalItem) {
 
-            $item = Arr::get($originalItem, 'content.itemContent.tweet_results.result');
+            $item = Arr::get($originalItem, $tweetRootPath);
 
-            $tweet = Arr::get($item, 'legacy', Arr::get($item, 'tweet.legacy'));
-            $user = Arr::get($item, 'core.user_results.result.legacy', Arr::get($item, 'tweet.core.user_results.result.legacy'));
+            if ($item === null) {
+                continue;
+            }
+
+            $unpack = $this->unpackUserAndTweer($item);
+
+            $tweet = Arr::get($unpack, 'tweet');
+            $user = Arr::get($unpack, 'user');
 
 
             if (Arr::get($tweet, 'user_id_str') === null) {
@@ -75,36 +180,8 @@ class TwitterService
                 continue;
             }
 
-            $createdAt = Carbon::createFromFormat('D M d H:i:s O Y', Arr::get($tweet, 'created_at'));
-            $tweet['created_at_timestamp'] = $createdAt->timestamp;
-            $tweet['created_at'] = $createdAt;
-
-            $entities = Arr::get($tweet, 'entities', []);
-            $userMentions = Arr::get($entities, 'user_mentions', []);
-            $symbolMentions = Arr::get($entities, 'symbols', []);
-
-            $usernameMentions = [];
-            $userIdsMentions = [];
-            $tickers = [];
-
-            foreach ($userMentions as $mention) {
-                $usernameMentions[] = $mention['screen_name'];
-                $userIdsMentions[] = $mention['id_str'];
-            }
-
-            foreach ($symbolMentions as $symbolMention) {
-                $tickers[] = strtoupper($symbolMention['text']);
-            }
-
-            $tweet['post_type'] = $this->getPostType($tweet);
-            $tweet['username_mentions'] = array_unique($usernameMentions);
-            $tweet['user_ids_mentions'] = array_unique($userIdsMentions);
-            $tweet['tickers'] = array_unique($tickers);
-
-            $tweet['ticker_mentions_count'] = count($tickers);
-            $tweet['user_mentions_count'] = count($userMentions);
-
-            $user['user_id'] = Arr::get($tweet, 'user_id_str');
+            $tweet = $this->formatTweet($tweet);
+            $user = $this->formatUser($user, $tweet);
 
             $tweets[] = [
                 'tweet' => $tweet,
@@ -113,11 +190,6 @@ class TwitterService
         }
 
         return $tweets;
-    }
-
-    private function parseCursor(array $response) : array
-    {
-        return Arr::get($response, 'cursor');
     }
 
     private function getPostType(array $tweet): string
@@ -135,20 +207,5 @@ class TwitterService
         }
 
         return 'post';
-    }
-
-    private function sendRequest($query = [])
-    {
-        $json = (new Client())->get($this->host.'/search-v2', [
-            'headers' => [
-                'x-rapidapi-key' => $this->apiKey
-            ],
-            'verify' => false,
-            'proxy' => 'http://127.0.0.1:8080',
-            'query' => $query,
-
-        ])->getBody()->getContents();
-
-        return json_decode($json, true);
     }
 }

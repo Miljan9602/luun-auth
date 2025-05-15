@@ -27,6 +27,8 @@ class ProjectResource extends JsonResource
             'campaigns_count' => $this->campaigns_count,
             'active_rewards_usd' => doubleval($this->active_rewards_usd),
             'rewards_distributed_usd' => doubleval($this->rewards_distributed_usd),
+            'is_featured_enabled' => $this->is_featured_enabled,
+            'featured_image_url' => $this->featured_image_url
         ];
 
         switch ($this->type) {
