@@ -55,16 +55,14 @@ class MineTweets extends Command
      */
     public function handle(TwitterService $twitterService)
     {
-        $names = ['@dragonswap_dex', '$DSWAP', '$SEI', '@SeiNetwork'];
-        $names = ['@dragonswap_dex', '$DSWAP'];
         $cursorDirection = 'bottom';
 
-        $names = ['@dragonswap_dex'];
+        $names = ['#DragonSwapGlobal'];
 
         $loopCountTypes = [
-            'latest' => 150,
-            'media' => 20,
-            'top' => 20
+            'latest' => 20,
+            'media' => 2,
+            'top' => 2
         ];
 
         foreach ($names as $name) {

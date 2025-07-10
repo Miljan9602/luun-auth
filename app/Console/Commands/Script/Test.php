@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Traits\EnumeratesValues;
@@ -48,26 +49,26 @@ class Test extends Command
 
     protected function jobs()
     {
-        // 'Customer support',
+//        $jobs = ['software engineer' => 6, 'backend developer' => 3, 'sre' => 3, 'devops' => 3, 'web3' => 3, 'infra' => 3];
+        $jobs = ['crypto' => 3];
 
-        $jobs = ['tracking'];
-        $loop = 5;
-
-        foreach ($jobs as $job) {
+        foreach ($jobs as $job => $loop) {
 
             for ($i=1; $i<=$loop; $i++) {
 
-                $json = (new Client())->get('https://jsearch.p.rapidapi.com/search', [
-                    'query' => [
-                        'query' => $job,
-                        'num_pages' => 20,
-                        'date_posted' => 'all',
-                        'page' => $i
-                    ],
-                    'headers' => [
-                        'x-rapidapi-key' => 'c001e66c84msh9059c9f0f4db38bp17f8d4jsnb3c0915dcb71'
-                    ]
-                ])->getBody()->getContents();
+                $json = Cache::remember(sha1($job.$i), 86400, function () use ($job, $i) {
+                    return (new Client())->get('https://jsearch.p.rapidapi.com/search', [
+                        'query' => [
+                            'query' => $job,
+                            'num_pages' => 20,
+                            'date_posted' => 'all',
+                            'page' => $i,
+                        ],
+                        'headers' => [
+                            'x-rapidapi-key' => 'c001e66c84msh9059c9f0f4db38bp17f8d4jsnb3c0915dcb71'
+                        ]
+                    ])->getBody()->getContents();
+                });
 
                 $decoded = json_decode($json, true);
 
@@ -75,7 +76,10 @@ class Test extends Command
 
                 foreach ($items as $item) {
                     $jobId = Arr::get($item, 'job_id');
-                    DB::connection('mongodb')->table('jobs_'.$job)->updateOrInsert(['job_id' => $jobId], $item);
+
+                    $item['job_search'] = $job;
+
+                    DB::connection('mongodb')->table('dev_jobs')->updateOrInsert(['job_id' => $jobId], $item);
                 }
 
                 echo "Page $i for job $job processed.\n";
@@ -91,27 +95,27 @@ class Test extends Command
     public function handle(TweetRepositoryInterface $tweetRepository, XUserRepositoryInterface $userRepository)
     {
 
-//        $this->jobs();
-//        return;
-
         $collection = 'post';
-        $profileName = '@dragonswap_dex';
-        $profileTicker = '$DSWAP';
+//        $profileName = '@dragonswap_dex';
+//        $profileTicker = '$DSWAP';
+        $hashTag = '$DRG';
 
         while (true) {
 
             $tweets = DB::connection('mongodb')->table($collection)
-                ->whereIn('search_key', [$profileName, $profileTicker])
-                ->whereNull('ai_score.open_ai_new')
-                ->where('ticker_mentions_count', '<', 3)
-                ->get()
-                ->filter(function ($item) {
-                    $createdAt = Carbon::create($item->created_at);
-                    $updatedAt = Carbon::create($item->updated_at);
+                ->whereIn('search_key', [$hashTag])
+                ->where('created_at_timestamp', '>', 1750750200)
+//                ->whereNull('ai_score.open_ai_new')
+//                ->where('ticker_mentions_count', '<', 3)
+                ->get();
+//                ->filter(function ($item) {
+//                    $createdAt = Carbon::create($item->created_at);
+//                    $updatedAt = Carbon::create($item->updated_at);
+//
+//                    // Min 4 hours needs to pass.
+//                    return $createdAt->diffInHours($updatedAt) >= 4;
+//                });
 
-                    // Min 4 hours needs to pass.
-                    return $createdAt->diffInHours($updatedAt) >= 4;
-                });
 
             $total = sizeof($tweets);
             $current = 0;
@@ -405,7 +409,7 @@ Score must be an integer between 1-100 representing the sum of all dimension sco
             'Display Name'  => $user['name'] ?? '',
             'Bio'           => $user['description'] ?? '',
             'Location'      => $user['location'] ?? 'N/A',
-            'Verified'      => $user['verified'] ? 'Yes' : 'No',
+//            'Verified'      => $user['verified'] ? 'Yes' : 'No',
             'Profile Created' => $user['created_at'] ?? '',
             'Followers'     => $user['followers_count'] ?? 0,
             'Following'     => $user['friends_count'] ?? 0,
